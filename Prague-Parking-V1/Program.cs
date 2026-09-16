@@ -1,4 +1,5 @@
-﻿using Spectre.Console;
+﻿
+using Spectre.Console;
 
 bool programmetKörs = true;
 string[] parkingGarage = new string[101];
@@ -19,6 +20,7 @@ while (programmetKörs)
         new SelectionPrompt<string>()
             .Title("[red]Vad vill du göra?[/]")
             .PageSize(12)
+            .HighlightStyle(new Style(Color.LightGoldenrod1))
             .AddChoices(
                 "Parkera fordon",
                 "Flytta fordon",
@@ -197,7 +199,7 @@ static void ParkeraFordon(string[] parkingGarage)
         return;
     }
     // STEG 4: Parkera fordonet
-    if(fordonstyp == "MC" && !string.IsNullOrEmpty(parkingGarage[plats]))
+    if (fordonstyp == "MC" && !string.IsNullOrEmpty(parkingGarage[plats]))
     {
         parkingGarage[plats] += $"|MC#{registreringsnummer}";
     }
@@ -229,26 +231,26 @@ static void HämtaUtFordon()
 
 static void SökFordon(string[] parkingGarage)
 {
-        AnsiConsole.Clear();
+    AnsiConsole.Clear();
 
-        Console.WriteLine("=== Sök fordon ===");
+    Console.WriteLine("=== Sök fordon ===");
 
-        string registreringsnummer = LäsRegistreringsnummer();
+    string registreringsnummer = LäsRegistreringsnummer();
 
-        int plats = HittaFordon(parkingGarage, registreringsnummer);
+    int plats = HittaFordon(parkingGarage, registreringsnummer);
 
-        if (plats == -1)
-        {
-            Console.WriteLine("\nFordonet hittades inte.");
-        }
-        else
-        {
-            Console.WriteLine($"\nFordonet finns på plats {plats}.");
-        }
+    if (plats == -1)
+    {
+        Console.WriteLine("\nFordonet hittades inte.");
+    }
+    else
+    {
+        Console.WriteLine($"\nFordonet finns på plats {plats}.");
+    }
 
-        Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
-        Console.ReadKey();
-    
+    Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
+    Console.ReadKey();
+
 }
 
 static void VisaParkering(string[] parkingGarage)
