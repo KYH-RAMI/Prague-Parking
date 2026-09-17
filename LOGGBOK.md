@@ -355,6 +355,78 @@ kunde tolka.
 Det var bra träning i att läsa själva felmeddelandet och inte bara
 titta på vilken rad Visual Studio markerar.
 
+### Hämta ut fordon
+
+Jag implementerade även funktionen `HämtaUtFordon()`.
+
+Funktionen börjar med att läsa in registreringsnumret och använder
+sedan den befintliga metoden `HittaFordon()` för att hitta vilken
+parkeringsplats fordonet står på.
+
+Om registreringsnumret inte finns i parkeringen får användaren
+ett felmeddelande och kan välja mellan att försöka igen eller
+gå tillbaka till huvudmenyn.
+
+Jag använde en `while`-loop tillsammans med `continue` och `return`
+för att styra detta flöde.
+
+Jag börjar förstå skillnaden bättre:
+
+- `continue` gör att loopen börjar om och användaren får försöka igen.
+- `return` avslutar metoden och användaren kommer tillbaka till huvudmenyn.
+
+### Ta bort CAR och MC
+
+Om en parkeringsplats bara innehåller ett fordon, alltså en CAR
+eller en ensam MC, kan hela arraypositionen tömmas.
+
+Exempel:
+
+`CAR#ABC123`
+
+eller:
+
+`MC#ABC123`
+
+Då kan platsen göras ledig igen.
+
+Det svårare fallet var när två MC delar samma parkeringsplats:
+
+`MC#ABC123|MC#DEF456`
+
+Jag får då inte tömma hela parkeringsplatsen eftersom den andra
+motorcykeln ska stå kvar.
+
+Jag använder därför `Split('|')` för att dela upp de två
+motorcyklarna och kontrollera vilken som ska tas bort.
+
+Jag gick även igenom `String.Join()` eftersom läraren tidigare
+tipsat om att använda `Split()` och `Join()`.
+
+Jag förstår nu principen bättre:
+
+`Split()` används för att gå från en string till flera delar.
+
+`Join()` används för att sätta ihop flera strings till en string
+igen med en vald separator mellan dem.
+
+I det här fallet används `|` som separator mellan två MC.
+
+### Reflektion
+
+Jag märkte under arbetet med `HämtaUtFordon()` att koden snabbt
+blir ganska omfattande när all information om fordonen lagras
+som strings i arrayen.
+
+Samtidigt börjar jag förstå mer av varför metoder som
+`HittaFordon()` är bra att återanvända istället för att skriva
+samma söklogik på flera ställen.
+
+Jag har fått en del hjälp av Visual Studio och även hjälp med att
+förstå och felsöka koden, så jag vill fortsätta gå igenom delarna
+så att jag själv förstår varför de fungerar och inte bara att de
+fungerar.
+
 ### Funderingar
 
 Jag funderade även på hur tabellen skulle vara tydligast att läsa.
@@ -368,9 +440,9 @@ ett fordon står på.
 
 Nästa steg är att:
 
-1. fortsätta justera parkeringsöversikten,
-2. implementera `HämtaUtFordon()`,
-3. implementera `FlyttaFordon()`,
-4. fortsätta testa programmet med olika typer av fordon (CAR och MC).
-5. kontrollera att alla funktioner fungerar tillsammans innan version 1.0 är klar.
-6. se om det finns fler förbättringar som kan göras innan inlämning, t.ex. optimering av koden och bättre läsbarhet. Jag vill också se om jag kan återanvända metoder mer för att undvika upprepning av kod.
+1. implementera `FlyttaFordon()`,
+2. testa `HämtaUtFordon()` med CAR, ensam MC och två MC på samma plats,
+3. fortsätta testa programmet med olika kombinationer av fordon,
+4. gå igenom koden metod för metod för att säkerställa att jag själv förstår logiken,
+5. kontrollera att alla funktioner fungerar tillsammans innan version 1.0 är klar,
+6. se om det finns fler förbättringar som kan göras innan inlämning, t.ex. bättre läsbarhet och mer återanvändning av metoder.

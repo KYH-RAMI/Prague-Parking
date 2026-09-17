@@ -42,7 +42,7 @@ while (programmetKörs)
             break;
 
         case "Hämta ut fordon":
-            HämtaUtFordon();
+            HämtaUtFordon(parkingGarage);
             break;
 
         case "Sök fordon":
@@ -236,12 +236,59 @@ static void FlyttaFordon()
     Console.ReadKey();
 }
 
-static void HämtaUtFordon()
+static void HämtaUtFordon(string[] parkingGarage)
 {
     AnsiConsole.Clear();
     Console.WriteLine("=== Hämta ut fordon ===");
-    Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
-    Console.ReadKey();
+    while (true)
+    {
+        string registreringsnummer = LäsRegistreringsnummer();
+        int plats = HittaFordon(parkingGarage, registreringsnummer);
+
+        if (plats == -1)
+        {
+            AnsiConsole.MarkupLine($"[red]\n\nFordonet hittades inte.[/]");
+            string val = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                .Title("Vad vill du göra? ")
+                .HighlightStyle(new Style(Color.LightGoldenrod1))
+                .AddChoices(
+                    "Försök igen!",
+                    "Tillbaka till huvudmenyn"
+                    ));
+            if (val == "Tillbaka till huvudmenyn")
+            {
+                return;
+            }
+            Console.WriteLine();
+            continue;
+        }
+        else if (parkingGarage[plats].Contains("|"))
+        {
+            string[] mcFordon = parkingGarage[plats].Split('|');
+            string[] kvarVarandeFordon = new string[mcFordon.Length - 1];
+            int index = 0;
+            foreach (string fordon in mcFordon)
+            {
+                if (!fordon.EndsWith($"#{registreringsnummer}"))
+                {
+                    kvarVarandeFordon[index] = fordon;
+                    index++;
+                }
+            }
+            parkingGarage[plats] = string.Join("|", kvarVarandeFordon);
+
+            AnsiConsole.MarkupLine($"[green]\nFordonet har hämtats ut från plats {plats}.[/]");
+        }
+        else
+        {
+            parkingGarage[plats] = string.Empty;
+            AnsiConsole.MarkupLine($"[green]\nFordonet har hämtats ut från plats {plats}.[/]");
+        }
+
+        Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
+        Console.ReadKey();
+    }
 }
 
 static void SökFordon(string[] parkingGarage)

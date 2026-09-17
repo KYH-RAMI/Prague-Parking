@@ -25,7 +25,7 @@ Systemet ska kunna:
 - [x] Kontrollera dubbletter av registreringsnummer
 - [x] Söka efter fordon
 - [ ] Flytta fordon
-- [ ] Hämta ut fordon
+- [X] Hämta ut fordon
 
 
 ## Parkeringsplatser
