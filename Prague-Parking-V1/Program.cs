@@ -71,7 +71,7 @@ static string LäsFordonstyp()
             return fordonstyp;
         }
 
-        Console.WriteLine("Ogiltig fordonstyp. Ange CAR eller MC.\n");
+        AnsiConsole.MarkupLine($"[red]\nOgiltig fordonstyp. Ange CAR eller MC.[/]\n");
     }
 }
 
@@ -128,12 +128,12 @@ static string LäsRegistreringsnummer()
         string registreringsnummer = (Console.ReadLine() ?? "").ToUpper();
         if (string.IsNullOrWhiteSpace(registreringsnummer))
         {
-            Console.WriteLine("Registreringsnummer får inte vara tomt.\n");
+            AnsiConsole.MarkupLine($"[red]\nRegistreringsnummer får inte vara tomt.[/]\n");
             continue;
         }
         if (registreringsnummer.Length > 10)
         {
-            Console.WriteLine("Registreringsnummer får inte vara längre än 10 tecken.\n");
+            AnsiConsole.MarkupLine($"[red]\nRegistreringsnummer får inte vara längre än 10 tecken.[/]\n");
             continue;
         }
         bool giltigaTecken = true;
@@ -147,8 +147,8 @@ static string LäsRegistreringsnummer()
         }
         if (!giltigaTecken)
         {
-            Console.WriteLine(
-                "Registreringsnumret får bara innehålla bokstäver och siffror.\n");
+            AnsiConsole.MarkupLine($"[red]" +
+                $"Registreringsnumret får bara innehålla bokstäver och siffror.[/]\n");
             continue;
         }
         return registreringsnummer;
@@ -178,6 +178,21 @@ static int HittaFordon(string[] parkingGarage, string registreringsnummer)
 
     return -1;
 }
+// Kontrollera registreringsnummer för undvika dubbletter
+static string LäsUniktRegistreringsnummer(string[] parkingGarage)
+{
+    while (true)
+    {
+        string registreringsnummer = LäsRegistreringsnummer();
+        int plats = HittaFordon(parkingGarage, registreringsnummer);
+        if (plats != -1)
+        {
+            AnsiConsole.MarkupLine($"[red]\nFordonet med registreringsnummer {registreringsnummer} finns redan på plats {plats}.[/]\n\n");
+            continue;
+        }
+        return registreringsnummer;
+    }
+}
 static void ParkeraFordon(string[] parkingGarage)
 {
     AnsiConsole.Clear();
@@ -187,14 +202,14 @@ static void ParkeraFordon(string[] parkingGarage)
     // STEG 1: Fordonstyp
     string fordonstyp = LäsFordonstyp();
     // STEG 2: Registreringsnummer
-    string registreringsnummer = LäsRegistreringsnummer();
+    string registreringsnummer = LäsUniktRegistreringsnummer(parkingGarage);
 
-    // STEG 3: Hitta en tom plats
+    // STEG 3: Hitta en lämplig plats för fordonet
     int plats = HittaPlatsFörFordon(parkingGarage, fordonstyp);
     if (plats == -1)
     {
-        Console.WriteLine("Ingen tom plats kvar. Parkeringen är full.");
-        Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
+        AnsiConsole.MarkupLine($"[red]\nIngen tom plats kvar. Parkeringen är full.[/]");
+        AnsiConsole.MarkupLine($"[white]\n\nTryck på en tangent för att gå tillbaka...[/]");
         Console.ReadKey();
         return;
     }
@@ -207,7 +222,7 @@ static void ParkeraFordon(string[] parkingGarage)
     {
         parkingGarage[plats] = $"{fordonstyp}#{registreringsnummer}";
     }
-    Console.WriteLine($"Fordonet har parkerats på plats {plats}.");
+    AnsiConsole.MarkupLine($"[green]\nFordonet har parkerats på plats {plats}.[/]");
     Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
     Console.ReadKey();
 }
@@ -241,11 +256,11 @@ static void SökFordon(string[] parkingGarage)
 
     if (plats == -1)
     {
-        Console.WriteLine("\nFordonet hittades inte.");
+        AnsiConsole.MarkupLine($"[red]\n\nFordonet hittades inte.[/]");
     }
     else
     {
-        Console.WriteLine($"\nFordonet finns på plats {plats}.");
+        AnsiConsole.MarkupLine($"[green]\nFordonet finns på plats {plats}.[/]");
     }
 
     Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
@@ -293,7 +308,8 @@ static void VisaParkering(string[] parkingGarage)
             }
             else if (parkingGarage[plats].StartsWith("MC#"))
             {
-                innehåll = $"[bold white]P-{plats}[/]\n[yellow]{parkingGarage[plats]}[/]";
+                string mcVisning = parkingGarage[plats].Replace("|", "\n");
+                innehåll = $"[bold white]P-{plats}[/]\n[DarkOrange]{mcVisning}[/]";
             }
             else
             {

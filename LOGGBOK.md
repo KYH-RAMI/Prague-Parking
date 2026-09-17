@@ -293,7 +293,44 @@ Jag lade också till platsnumret direkt i varje ruta, t.ex.
 `P-1`, `P-11` och `P-21`, eftersom det annars var svårt att se
 exakt vilken parkeringsplats ett fordon stod på.
 
-Lediga platser visas i grått, bilar i grönt och MC i gult färg.
+Lediga platser visas i grått, bilar i grönt och MC i mörkorange färg.
+
+### Dubblettkontroll och färgkodning
+
+Jag lade även till kontroll så att samma registreringsnummer inte
+kan parkeras flera gånger.
+
+Jag använder nu metoden:
+
+`LäsUniktRegistreringsnummer(string[] parkingGarage)`
+
+Metoden återanvänder `LäsRegistreringsnummer()` för valideringen
+och `HittaFordon()` för att kontrollera om registreringsnumret
+redan finns i parkeringen.
+
+Om fordonet redan finns visas ett felmeddelande och vilken
+parkeringsplats fordonet står på. Användaren får sedan ange ett
+nytt registreringsnummer.
+
+Jag började även använda Spectre.Console mer konsekvent för
+meddelanden i programmet.
+
+Felmeddelanden visas i rött och lyckade åtgärder i grönt.
+
+I parkeringsöversikten använder jag även olika färger för att
+göra den lättare att läsa:
+
+- grått för lediga platser,
+- grönt för CAR,
+- DarkOrange för MC,
+- vitt för parkeringsnummer.
+
+Jag testade först färgen `orange`, men Spectre.Console gav felet:
+
+`Could not find color or style 'orange'.`
+
+Efter felsökning ändrade jag till `DarkOrange`, vilket fungerar
+och dessutom syns bättre i terminalen.
 
 ### Problem/felsökning
 
@@ -332,7 +369,8 @@ ett fordon står på.
 Nästa steg är att:
 
 1. fortsätta justera parkeringsöversikten,
-2. kontrollera dubbla registreringsnummer,
-3. implementera `HämtaUtFordon()`,
-4. implementera `FlyttaFordon()`,
-5. fortsätta testa programmet med olika typer av fordon.
+2. implementera `HämtaUtFordon()`,
+3. implementera `FlyttaFordon()`,
+4. fortsätta testa programmet med olika typer av fordon (CAR och MC).
+5. kontrollera att alla funktioner fungerar tillsammans innan version 1.0 är klar.
+6. se om det finns fler förbättringar som kan göras innan inlämning, t.ex. optimering av koden och bättre läsbarhet. Jag vill också se om jag kan återanvända metoder mer för att undvika upprepning av kod.

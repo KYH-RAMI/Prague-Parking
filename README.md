@@ -22,7 +22,7 @@ Systemet ska kunna:
 - [x] Parkera fordon på en lämplig plats
 - [x] Visa parkeringsplatserna
 - [x] Hantera två MC på samma parkeringsplats
-- [ ] Kontrollera dubbletter av registreringsnummer
+- [x] Kontrollera dubbletter av registreringsnummer
 - [x] Söka efter fordon
 - [ ] Flytta fordon
 - [ ] Hämta ut fordon
