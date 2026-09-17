@@ -216,6 +216,33 @@ motsvarar index 100.
 Det gör koden enklare att läsa eftersom jag slipper använda
 `plats + 1` vid in- och utmatning.
 
+### GitHub och versionshantering
+
+Jag publicerade även projektet på GitHub idag.
+
+Läraren vill kunna följa utvecklingen genom commits, så jag valde
+att börja använda GitHub redan under arbetet med version 1.0 istället
+för att bara ladda upp det färdiga projektet i slutet.
+
+Jag skapade repositoryt direkt från Visual Studio och använder
+Visual Studios Git-funktioner för commits och push.
+
+Jag lade även till Visual Studios standard `.gitignore` så att filer
+och mappar som t.ex. `bin`, `obj` och `.vs` inte ska följa med till
+GitHub.
+
+Eftersom projektet redan hade kommit en bit när jag publicerade det
+blev den första uppladdningen en större version av det jag hade gjort
+hittills. Framöver tänker jag försöka göra mindre och tydligare
+commits när en funktion eller förändring är färdig.
+
+Jag har också börjat förstå bättre skillnaden mellan att göra en
+commit lokalt och att sedan pusha ändringarna till GitHub.
+
+Jag upptäckte även en gammal `TextFile1.txt` i solution-mappen som
+råkat följa med till repositoryt. Den användes inte av programmet
+och togs därför bort i en senare ändring.
+
 ### Problem/funderingar
 
 Jag råkade vid ett tillfälle skapa `SökFordon()` inuti en annan
@@ -241,3 +268,71 @@ Nästa steg är att:
 
 Jag vill försöka återanvända `HittaFordon()` och de andra sökmetoderna
 så att samma loopar inte behöver skrivas flera gånger.
+
+## 2026-09-17
+
+### Förbättrad visning av parkeringen
+
+Idag fortsatte jag arbeta med `VisaParkering()`.
+
+Tidigare skrevs alla 100 parkeringsplatser ut som en lång lista.
+Det fungerade, men det var svårt att få en snabb överblick över
+hela parkeringen.
+
+Jag byggde därför om visningen med `Table` från Spectre.Console
+och skapade en tabell med 10 kolumner och 10 rader.
+
+För att räkna ut vilket parkeringsnummer varje ruta motsvarar
+använder jag:
+
+`int plats = (rad - 1) * 10 + kolumn + 1;`
+
+På så sätt kan tabellen visa parkeringsplatserna 1–100.
+
+Jag lade också till platsnumret direkt i varje ruta, t.ex.
+`P-1`, `P-11` och `P-21`, eftersom det annars var svårt att se
+exakt vilken parkeringsplats ett fordon stod på.
+
+Lediga platser visas i grått, bilar i grönt och MC i gult färg.
+
+### Problem/felsökning
+
+Jag fick först ett fel från Spectre.Console:
+
+`Value cannot be null`
+
+Det gjorde att jag tittade närmare på hur `string[] row` fylls innan
+den skickas till `table.AddRow(row)`.
+
+Jag fick senare även felet:
+
+`Could not find color or style 'orange'.`
+
+Visual Studio markerade området kring min `else`-sats, så först trodde
+jag att problemet låg där.
+
+Efter att ha läst hela exception-meddelandet och stack trace såg jag
+att det egentligen var färgnamnet `orange` som Spectre.Console inte
+kunde tolka.
+
+Det var bra träning i att läsa själva felmeddelandet och inte bara
+titta på vilken rad Visual Studio markerar.
+
+### Funderingar
+
+Jag funderade även på hur tabellen skulle vara tydligast att läsa.
+
+Jag vill behålla kolumnnumreringen 1–10 högst upp, men även visa det
+exakta parkeringsnumret i varje ruta. Det gör att man snabbare kan
+orientera sig i tabellen samtidigt som man direkt ser vilken plats
+ett fordon står på.
+
+### Nästa steg
+
+Nästa steg är att:
+
+1. fortsätta justera parkeringsöversikten,
+2. kontrollera dubbla registreringsnummer,
+3. implementera `HämtaUtFordon()`,
+4. implementera `FlyttaFordon()`,
+5. fortsätta testa programmet med olika typer av fordon.

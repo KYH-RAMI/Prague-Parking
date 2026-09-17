@@ -255,22 +255,59 @@ static void SökFordon(string[] parkingGarage)
 
 static void VisaParkering(string[] parkingGarage)
 {
+
     AnsiConsole.Clear();
 
     AnsiConsole.MarkupLine("[bold green]=== Visa parkering ===[/]\n");
 
-    for (int plats = 1; plats < parkingGarage.Length; plats++)
+    var table = new Table()
+        .Border(TableBorder.Rounded)
+        .BorderColor(Color.Blue)
+        .Title("[bold red]=== Parkeringen ===[/]")
+        .ShowRowSeparators();
+   
+    //Kolumnrubriker 1-10
+    for (int i = 1; i <= 10; i++)
     {
-        if (string.IsNullOrEmpty(parkingGarage[plats]))
-        {
-            Console.WriteLine($"Plats {plats}: Ledig");
-        }
-        else
-        {
-            Console.WriteLine($"Plats {plats}: {parkingGarage[plats]}");
-        }
-    }
+        table.AddColumn($"[grey]{i}[/]");
 
-    Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
+    }
+    
+    //10 rader med 10 P-platser
+    for (int rad = 1; rad <= 10; rad++)
+    {
+        string[] row = new string[10];
+        for (int kolumn = 0; kolumn < 10; kolumn++)
+        {
+
+            int plats = (rad - 1) * 10 + kolumn + 1;
+            string innehåll;
+
+            if (string.IsNullOrEmpty(parkingGarage[plats]))
+            {
+                innehåll = $"[bold white]P-{plats}[/]\n[grey]LEDIG[/]";
+            }
+            else if (parkingGarage[plats].StartsWith("CAR#"))
+            {
+                innehåll = $"[bold white]P-{plats}[/]\n[green]{parkingGarage[plats]}[/]";
+            }
+            else if (parkingGarage[plats].StartsWith("MC#"))
+            {
+                innehåll = $"[bold white]P-{plats}[/]\n[yellow]{parkingGarage[plats]}[/]";
+            }
+            else
+            {
+                innehåll = $"[bold white]P-{plats}[/]\n{parkingGarage[plats]}";
+            }
+            row[kolumn] = innehåll;
+
+        }
+     
+
+        table.AddRow(row);
+    }
+    AnsiConsole.Write(table);
+    Console.WriteLine();
+    Console.WriteLine("Tryck på en tangent för att gå tillbaka...");
     Console.ReadKey();
 }
