@@ -24,8 +24,8 @@ Systemet ska kunna:
 - [x] Hantera två MC på samma parkeringsplats
 - [x] Kontrollera dubbletter av registreringsnummer
 - [x] Söka efter fordon
-- [ ] Flytta fordon
-- [X] Hämta ut fordon
+- [x] Flytta fordon
+- [x] Hämta ut fordon
 
 
 ## Parkeringsplatser
@@ -35,8 +35,8 @@ Parkeringen representeras med en string-array.
 ```csharp
 string[] parkingGarage = new string[101];
 parkingGarage[0] = "PERSONALPARKERING";
+```
 
-```markdown
 Index 0 används som reserverad plats.
 
 Det gör att parkeringsplats 1 motsvarar `parkingGarage[1]`
@@ -60,3 +60,12 @@ Två MC på samma parkeringsplats lagras som:
 
 Projektet använder NuGet-paketet `Spectre.Console`
 för huvudmenyn och konsolpresentationen.
+
+Paketet återställs normalt automatiskt när projektet
+öppnas och byggs i Visual Studio.
+
+## Avgränsningar
+
+Version 1.0 hanterar inte fordon som är kvar efter parkeringens
+stängning vid 00.00. Den hanteringen ligger utanför det aktuella
+systemet enligt uppgiften.

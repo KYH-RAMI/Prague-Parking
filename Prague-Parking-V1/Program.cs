@@ -38,7 +38,7 @@ while (programmetKörs)
             break;
 
         case "Flytta fordon":
-            FlyttaFordon();
+            FlyttaFordon(parkingGarage);
             break;
 
         case "Hämta ut fordon":
@@ -226,15 +226,140 @@ static void ParkeraFordon(string[] parkingGarage)
     Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
     Console.ReadKey();
 }
-
-
-static void FlyttaFordon()
+//Metod för att läsa parkeringsplats  mellan 1-100 och kontrollera att den är giltig
+static int LäsParkeringsplats(string[] parkingGarage)
+{
+    while (true)
+    {
+        Console.Write("Ange parkeringplats: ");
+        if (!int.TryParse(Console.ReadLine(), out int plats))
+        {
+            AnsiConsole.MarkupLine("[red]Du måste ange ett nummer.[/]");
+            continue;
+        }
+        if (plats < 1 || plats >= parkingGarage.Length)
+        {
+            AnsiConsole.MarkupLine("[red]Ogiltig plats.[/]");
+            continue;
+        }
+        return plats;
+    }
+}
+static void FlyttaFordon(string[] parkingGarage)
 {
     AnsiConsole.Clear();
     Console.WriteLine("=== Flytta fordon ===");
-    Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
-    Console.ReadKey();
+
+    while (true)
+    {
+        string registreringsnummer = LäsRegistreringsnummer();
+        int plats = HittaFordon(parkingGarage, registreringsnummer);
+
+        if (plats == -1)
+        {
+            AnsiConsole.MarkupLine(
+                "[red]\nFordonet hittades inte.[/]\n");
+
+            string val = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Vad vill du göra?")
+                    .HighlightStyle(new Style(Color.LightGoldenrod1))
+                    .AddChoices(
+                        "Försök igen",
+                        "Tillbaka till huvudmenyn"
+                    )
+            );
+
+            if (val == "Tillbaka till huvudmenyn")
+            {
+                return;
+            }
+
+            continue;
+        }
+
+        AnsiConsole.MarkupLine(
+            $"[green]\nFordonet finns på plats {plats}.[/]");
+
+        string[] fordonPåPlatsen = parkingGarage[plats].Split('|');
+        string fordonAttFlytta = "";
+
+        foreach (string fordon in fordonPåPlatsen)
+        {
+            string[] delar = fordon.Split('#');
+
+            if (delar.Length >= 2 &&
+                delar[1] == registreringsnummer)
+            {
+                fordonAttFlytta = fordon;
+                break;
+            }
+        }
+
+        // Egen loop för att välja ny parkeringsplats
+        while (true)
+        {
+            AnsiConsole.MarkupLine(
+                "\n[white]Vilken plats vill du flytta fordonet till? [/]");
+
+            int nyPlats = LäsParkeringsplats(parkingGarage);
+
+            if (nyPlats == plats)
+            {
+                AnsiConsole.MarkupLine(
+                    "[red]\nFordonet är redan på den platsen.[/]");
+                continue;
+            }
+
+            // Tom plats
+            if (string.IsNullOrEmpty(parkingGarage[nyPlats]))
+            {
+                parkingGarage[nyPlats] = fordonAttFlytta;
+            }
+            // MC får dela med exakt en annan MC
+            else if (
+                fordonAttFlytta.StartsWith("MC#") &&
+                parkingGarage[nyPlats].StartsWith("MC#") &&
+                !parkingGarage[nyPlats].Contains("|"))
+            {
+                parkingGarage[nyPlats] += $"|{fordonAttFlytta}";
+            }
+            else
+            {
+                AnsiConsole.MarkupLine(
+                    "[red]\nDen nya platsen är upptagen. Välj en annan plats.[/]");
+                continue;
+            }
+
+            // Uppdatera den gamla platsen
+            if (fordonPåPlatsen.Length == 1)
+            {
+                parkingGarage[plats] = string.Empty;
+            }
+            else
+            {
+                if (fordonPåPlatsen[0] == fordonAttFlytta)
+                {
+                    parkingGarage[plats] = fordonPåPlatsen[1];
+                }
+                else
+                {
+                    parkingGarage[plats] = fordonPåPlatsen[0];
+                }
+            }
+
+            AnsiConsole.MarkupLine(
+                $"[green]\nFordonet har flyttats från plats {plats} till plats {nyPlats}.[/]");
+
+            Console.WriteLine(
+                "\nTryck på en tangent för att gå tillbaka...");
+            Console.ReadKey();
+
+            return;
+        }
+    }
 }
+    
 
 static void HämtaUtFordon(string[] parkingGarage)
 {
@@ -288,6 +413,7 @@ static void HämtaUtFordon(string[] parkingGarage)
 
         Console.WriteLine("\nTryck på en tangent för att gå tillbaka...");
         Console.ReadKey();
+        return;
     }
 }
 
@@ -327,14 +453,14 @@ static void VisaParkering(string[] parkingGarage)
         .BorderColor(Color.Blue)
         .Title("[bold red]=== Parkeringen ===[/]")
         .ShowRowSeparators();
-   
+
     //Kolumnrubriker 1-10
     for (int i = 1; i <= 10; i++)
     {
         table.AddColumn($"[grey]{i}[/]");
 
     }
-    
+
     //10 rader med 10 P-platser
     for (int rad = 1; rad <= 10; rad++)
     {
@@ -365,7 +491,7 @@ static void VisaParkering(string[] parkingGarage)
             row[kolumn] = innehåll;
 
         }
-     
+
 
         table.AddRow(row);
     }

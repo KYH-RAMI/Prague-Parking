@@ -446,3 +446,142 @@ Nästa steg är att:
 4. gå igenom koden metod för metod för att säkerställa att jag själv förstår logiken,
 5. kontrollera att alla funktioner fungerar tillsammans innan version 1.0 är klar,
 6. se om det finns fler förbättringar som kan göras innan inlämning, t.ex. bättre läsbarhet och mer återanvändning av metoder.
+
+## 2026-09-18
+
+### Flytta fordon
+
+Idag implementerade jag funktionen `FlyttaFordon()`.
+
+Funktionen börjar med att läsa in registreringsnumret och använder
+`HittaFordon()` för att hitta vilken parkeringsplats fordonet står på.
+
+Om fordonet inte hittas kan användaren försöka igen eller gå tillbaka
+till huvudmenyn.
+
+När fordonet hittats visas den nuvarande parkeringsplatsen och
+användaren får ange vilken plats fordonet ska flyttas till.
+
+### Validering av parkeringsplats
+
+Jag skapade en separat metod:
+
+`LäsParkeringsplats(string[] parkingGarage)`
+
+Metoden använder `int.TryParse()` för att kontrollera att användaren
+skriver in ett heltal.
+
+Den kontrollerar även att parkeringsplatsen ligger mellan 1 och 100.
+
+Jag lade också till kontroll så att ett fordon inte kan flyttas till
+samma parkeringsplats som det redan står på.
+
+### Flytt av CAR och MC
+
+Det enklaste fallet är när målplatsen är tom.
+
+Då kan fordonet läggas på den nya platsen och tas bort från den gamla.
+
+Det blev mer komplicerat när två MC står på samma parkeringsplats,
+eftersom bara den MC som användaren söker efter ska flyttas.
+
+Exempel:
+
+`MC#ABC123|MC#DEF456`
+
+Om `ABC123` ska flyttas får inte `DEF456` försvinna eller följa med
+till den nya platsen.
+
+Jag använder därför `Split('|')` för att dela upp fordonen på platsen
+och `Split('#')` för att hitta exakt vilket fordon som ska flyttas.
+
+Om två MC står på den gamla platsen kontrollerar programmet vilken av
+dem som flyttas och sparar den andra på den gamla parkeringsplatsen.
+
+Jag lade också till så att en MC får flyttas till en parkeringsplats
+där det redan står exakt en MC.
+
+För att det ska vara tillåtet kontrolleras att:
+
+- fordonet som flyttas är en MC,
+- fordonet på målplatsen är en MC,
+- målplatsen inte redan innehåller två MC.
+
+### Problem med programflödet
+
+När jag fortsatte testa funktionen upptäckte jag att programmet
+frågade efter registreringsnumret igen om användaren valde en
+upptagen målplats.
+
+Det berodde på att jag bara hade en `while`-loop runt hela
+`FlyttaFordon()`.
+
+När `continue` kördes hoppade programmet därför tillbaka till början
+av den loopen och frågade efter registreringsnumret igen.
+
+Jag löste detta genom att lägga till en andra `while`-loop för valet
+av den nya parkeringsplatsen.
+
+Den yttre loopen hanterar registreringsnumret och den inre loopen
+hanterar valet av målplats.
+
+Nu behöver användaren bara välja en ny parkeringsplats om den första
+är upptagen.
+
+Det gjorde att jag fick en bättre förståelse för hur loopar och
+`continue` fungerar.
+
+`continue` börjar om den närmaste loopen som koden ligger i.
+
+Jag har också blivit tydligare med skillnaden mellan:
+
+- `continue` - börjar nästa varv i närmaste loop,
+- `break` - avslutar närmaste loop,
+- `return` - avslutar hela metoden.
+
+### Tester
+
+Jag har testat bland annat:
+
+- CAR till en tom plats,
+- ensam MC till en tom plats,
+- flytt från en plats med två MC,
+- MC till en plats där en MC redan står,
+- upptagen målplats,
+- flytt till samma parkeringsplats,
+- ogiltiga parkeringsnummer som 0 och 101,
+- text istället för ett nummer,
+- registreringsnummer som inte finns i parkeringen.
+
+Jag upptäckte flera fel först när jag fortsatte testa specialfallen,
+så jag har fått ändra flyttfunktionen flera gånger under dagen.
+
+### Reflektion
+
+`FlyttaFordon()` blev mer komplicerad än jag först trodde.
+
+Det var framför allt hanteringen av två MC och programflödet med flera
+loopar som gjorde den svårare.
+
+När jag delar upp problemet i mindre steg blir det lättare att förstå:
+
+1. hitta fordonet,
+2. hitta exakt vilket fordon som ska flyttas,
+3. läsa och validera den nya parkeringsplatsen,
+4. kontrollera om fordonet får stå där,
+5. lägga fordonet på den nya platsen,
+6. uppdatera den gamla platsen.
+
+Jag behöver fortsätta träna på `while`, `if`, `continue`, `break`
+och `return` så att jag blir bättre på att själv följa programflödet.
+
+### Nästa steg
+
+Nästa steg är att:
+
+1. göra de sista testerna av flyttfunktionen med olika kombinationer av MC,
+2. gå igenom hela version 1.0 och kontrollera att alla krav är uppfyllda,
+3. testa funktionerna tillsammans,
+4. gå igenom koden metod för metod så att jag själv kan förklara hur den fungerar,
+5. se om det finns upprepad kod som senare kan förenklas eller återanvändas bättre,
+6. förbättra läsbarheten innan version 1.0 är helt klar.
